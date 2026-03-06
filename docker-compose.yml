@@ -1,0 +1,18 @@
+services:
+    pricecharting-api:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - "3000:3000"
+        environment:
+            - API_KEY=${API_KEY}
+            - PRICECHARTING_TIMEOUT=${PRICECHARTING_TIMEOUT}
+            - CACHE_DB_PATH=${CACHE_DB_PATH}
+            - CACHE_TTL_SECONDS=${CACHE_TTL_SECONDS}
+        volumes:
+            - cache-data:/app/.cache
+        restart: unless-stopped
+
+volumes:
+    cache-data:
