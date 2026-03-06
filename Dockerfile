@@ -1,15 +1,16 @@
 FROM oven/bun:alpine
 
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
 WORKDIR /app
 
-COPY package.json bun.lock tsconfig.json ./
+COPY --chown=appuser:appgroup package.json bun.lock tsconfig.json ./
+
 RUN bun install --frozen-lockfile --production
 
-COPY src/ ./src/
+COPY --chown=appuser:appgroup src/ ./src/
 
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup \
-    && mkdir -p .cache \
-    && chown -R appuser:appgroup /app
+RUN chown -R appuser:appgroup /app
 
 USER appuser
 
