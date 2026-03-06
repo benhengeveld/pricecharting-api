@@ -2,16 +2,11 @@ FROM oven/bun:alpine
 
 WORKDIR /app
 
-COPY package.json bun.lock tsconfig.json ./
+COPY --chown=bun:bun package.json bun.lock tsconfig.json ./
+
 RUN bun install --frozen-lockfile --production
 
-COPY src/ ./src/
-
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup \
-    && chown -R appuser:appgroup /app \
-    && chown -R appuser:appgroup /home/appuser
-
-USER appuser
+COPY --chown=bun:bun src/ ./src/
 
 EXPOSE 3000
 
