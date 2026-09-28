@@ -5,11 +5,11 @@
 		"format": "prettier --write ."
 	},
 	"dependencies": {
-		"dotenv": "^17.3.1",
-		"hono": "^4.12.5"
+		"dotenv": "^18.0.4",
+		"hono": "^4.13.10"
 	},
 	"devDependencies": {
 		"@types/bun": "latest",
-		"prettier": "^3.8.1"
+		"prettier": "^3.9.9"
 	}
 }
