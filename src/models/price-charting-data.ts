@@ -5,10 +5,12 @@ export interface PriceChartingProduct {
 	genre: string;
 	upc: string;
 	releaseDate: string;
-	loosePrice: number;
-	cibPrice: number;
-	newPrice: number;
-	gradedPrice: number;
-	boxOnlyPrice: number;
-	manualOnlyPrice: number;
+	pricing: {
+		loosePrice: number;
+		cibPrice: number;
+		newPrice: number;
+		gradedPrice: number;
+		boxOnlyPrice: number;
+		manualOnlyPrice: number;
+	};
 }

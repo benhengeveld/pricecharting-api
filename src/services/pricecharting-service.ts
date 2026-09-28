@@ -4,6 +4,9 @@ import { PriceChartingProduct } from "../models/price-charting-data.js";
 
 const baseUrl = "https://www.pricecharting.com/api";
 const usdToCad = 1.42;
+const requestIntervalMs = 1500;
+
+let requestQueue: Promise<unknown> = Promise.resolve();
 
 type PriceChartingData = {
 	id: string;
@@ -46,11 +49,11 @@ export async function getProduct(params: {
 		url += `&upc=${params.upc}`;
 	}
 
-	const response = await fetch(url, {
-		method: "GET",
-	});
-
-	console.log(url);
+	const response = await enqueue(() =>
+		fetch(url, {
+			method: "GET",
+		})
+	);
 
 	if (!response.ok) {
 		throw new Error(`PriceCharting request failed: ${response.status}`);
@@ -71,11 +74,25 @@ export async function getProduct(params: {
 		genre: data.genre,
 		upc: data.upc,
 		releaseDate: data["release-date"],
-		loosePrice: Math.round(data["loose-price"] * usdToCad) / 100,
-		cibPrice: Math.round(data["cib-price"] * usdToCad) / 100,
-		newPrice: Math.round(data["new-price"] * usdToCad) / 100,
-		gradedPrice: Math.round(data["graded-price"] * usdToCad) / 100,
-		boxOnlyPrice: Math.round(data["box-only-price"] * usdToCad) / 100,
-		manualOnlyPrice: Math.round(data["manual-only-price"] * usdToCad) / 100,
+		pricing: {
+			loosePrice: Math.round(data["loose-price"] * usdToCad) / 100,
+			cibPrice: Math.round(data["cib-price"] * usdToCad) / 100,
+			newPrice: Math.round(data["new-price"] * usdToCad) / 100,
+			gradedPrice: Math.round(data["graded-price"] * usdToCad) / 100,
+			boxOnlyPrice: Math.round(data["box-only-price"] * usdToCad) / 100,
+			manualOnlyPrice:
+				Math.round(data["manual-only-price"] * usdToCad) / 100,
+		},
 	} as PriceChartingProduct;
+}
+
+function enqueue<T>(task: () => Promise<T>): Promise<T> {
+	const result = requestQueue.then(task);
+	requestQueue = result
+		.catch(() => {})
+		.then(
+			() =>
+				new Promise((resolve) => setTimeout(resolve, requestIntervalMs))
+		);
+	return result;
 }
