@@ -27,16 +27,27 @@ hono.get("/product", async (c) => {
 		switch (priceType) {
 			case "loosePrice":
 				price = product.pricing.loosePrice;
+				break;
+
 			case "cibPrice":
 				price = product.pricing.cibPrice;
+				break;
+
 			case "newPrice":
 				price = product.pricing.newPrice;
+				break;
+
 			case "gradedPrice":
 				price = product.pricing.gradedPrice;
+				break;
+
 			case "boxOnlyPrice":
 				price = product.pricing.boxOnlyPrice;
+				break;
+
 			case "manualOnlyPrice":
 				price = product.pricing.manualOnlyPrice;
+				break;
 		}
 
 		if (price === null) {
