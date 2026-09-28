@@ -4,7 +4,7 @@ import { PriceChartingProduct } from "../models/price-charting-data.js";
 
 const baseUrl = "https://www.pricecharting.com/api";
 const usdToCad = 1.42;
-const requestIntervalMs = 1500;
+const requestIntervalMs = env.PRICECHARTING_TIMEOUT;
 
 let requestQueue: Promise<unknown> = Promise.resolve();
 
