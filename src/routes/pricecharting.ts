@@ -1,35 +1,43 @@
 import { Hono } from "hono";
-import { getPricingData } from "../services/pricecharting-service.js";
-import { PricingData } from "../models/pricing-data.js";
+import * as PriceChartingService from "../services/pricecharting-service.js";
+import { PriceChartingProduct } from "../models/price-charting-data.js";
 
 const hono = new Hono();
 
-hono.get("/price/:category/:item", async (c) => {
-	const category = c.req.param("category");
-	if (!category) {
-		return c.json({ error: "Missing category, and item parameters" }, 400);
-	}
-
-	const item = c.req.param("item");
-	if (!item) {
-		return c.json({ error: "Missing item parameter" }, 400);
-	}
+hono.get("/product", async (c) => {
+	const id = c.req.query("id");
+	const q = c.req.query("q");
+	const upc = c.req.query("upc");
 
 	const priceType = c.req.query("priceType");
 
-	let pricing: PricingData | null = null;
+	let product: PriceChartingProduct;
 	try {
-		pricing = await getPricingData(category, item);
+		product = await PriceChartingService.getProduct({ id, q, upc });
 	} catch (error) {
-		return c.json({ error: "Failed to retrieve data" }, 502);
-	}
-
-	if (!pricing) {
-		return c.json({ error: "Failed to fetch pricing data" }, 404);
+		if (error instanceof Error) {
+			return c.json({ error: error.message }, 502);
+		} else {
+			return c.json({ error: "PriceCharting request failed" }, 502);
+		}
 	}
 
 	if (priceType) {
-		const price = pricing.prices[priceType] ?? null;
+		let price: number | null = null;
+		switch (priceType) {
+			case "loosePrice":
+				price = product.pricing.loosePrice;
+			case "cibPrice":
+				price = product.pricing.cibPrice;
+			case "newPrice":
+				price = product.pricing.newPrice;
+			case "gradedPrice":
+				price = product.pricing.gradedPrice;
+			case "boxOnlyPrice":
+				price = product.pricing.boxOnlyPrice;
+			case "manualOnlyPrice":
+				price = product.pricing.manualOnlyPrice;
+		}
 
 		if (price === null) {
 			return c.json(
@@ -41,7 +49,7 @@ hono.get("/price/:category/:item", async (c) => {
 		return c.text(price.toString());
 	}
 
-	return c.json(pricing);
+	return c.json(product);
 });
 
 export { hono as pricecharting };
