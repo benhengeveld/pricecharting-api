@@ -1,6 +1,6 @@
 # pricecharting-api
 
-A small REST API that scrapes video game prices from [PriceCharting](https://www.pricecharting.com) and caches them locally in a SQLite database.
+A small REST API that scrapes video game prices from [PriceCharting](https://www.pricecharting.com).
 
 ## Requirements
 
@@ -39,22 +39,30 @@ Returns the API status and whether PriceCharting is reachable.
 }
 ```
 
-### `GET /api/price/:category/:item`
+### `GET /api/product`
 
-Returns all available prices for a game. The `category` and `item` come from the PriceCharting URL: `pricecharting.com/game/:category/:item`.
+Returns the product from PriceCharting.
 
 ```
-GET /api/price/nintendo-64/super-mario-64
+GET /api/product/?id=2456
 ```
 
 ```json
 {
-	"used_price": 38.86,
-	"complete_price": 140.14,
-	"new_price": 1075.01,
-	"graded_price": 4612.7,
-	"box_only_price": 46.54,
-	"manual_only_price": 8.8
+	"id": "2456",
+	"productName": "Pokemon FireRed",
+	"consoleName": "GameBoy Advance",
+	"genre": "RPG",
+	"upc": "045496734114",
+	"releaseDate": "2004-09-01",
+	"pricing": {
+		"loosePrice": 151.8,
+		"cibPrice": 553.8,
+		"newPrice": 1739.5,
+		"gradedPrice": 4366.5,
+		"boxOnlyPrice": 269.1,
+		"manualOnlyPrice": 24.85
+	}
 }
 ```
 
@@ -62,26 +70,20 @@ GET /api/price/nintendo-64/super-mario-64
 
 | Param       | Description                                      |
 | ----------- | ------------------------------------------------ |
+| `id`        | Gets the product based on the id                 |
+| `q`         | Gets the product based on the search query       |
+| `upc`       | Gets the product based on the upc                |
 | `priceType` | Return a single price by key (e.g. `used_price`) |
 
 ```
-GET /api/price/nintendo-64/super-mario-64?priceType=used_price
+GET /api/product?id=2456&priceType=usedPrice
 → 38.86
-```
-
-## Caching
-
-Prices are cached in a local SQLite database. Each fetch appends a new row, preserving full price history. On subsequent requests within the TTL window, the most recent cached entry is returned without hitting PriceCharting.
-
-```bash
-bun run cache:clear   # delete the local cache DB
 ```
 
 ## Environment Variables
 
-| Variable                | Default           | Description                                     |
-| ----------------------- | ----------------- | ----------------------------------------------- |
-| `API_KEY`               | _(required)_      | Bearer token for authenticating API requests    |
-| `PRICECHARTING_TIMEOUT` | `5000`            | Fetch timeout in milliseconds                   |
-| `CACHE_DB_PATH`         | `.cache/cache.db` | Path to the SQLite cache database file          |
-| `CACHE_TTL_SECONDS`     | `86400`           | Time-to-live for cached prices (default: 1 day) |
+| Variable                | Default      | Description                                  |
+| ----------------------- | ------------ | -------------------------------------------- |
+| `API_KEY`               | _(required)_ | Bearer token for authenticating API requests |
+| `PRICECHARTING_API_KEY` | _(required)_ | Token for authenticating with PriceCharting  |
+| `PRICECHARTING_TIMEOUT` | `5000`       | Fetch timeout in milliseconds                |

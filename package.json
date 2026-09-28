@@ -2,11 +2,9 @@
 	"name": "pricecharting-api",
 	"scripts": {
 		"dev": "bun run --hot src/index.ts",
-		"format": "prettier --write .",
-		"clear:cache": "rm -rf .cache"
+		"format": "prettier --write ."
 	},
 	"dependencies": {
-		"cheerio": "^1.2.0",
 		"dotenv": "^17.3.1",
 		"hono": "^4.12.5"
 	},

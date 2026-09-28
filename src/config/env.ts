@@ -25,7 +25,6 @@ function getEnvVarAsNumber(key: string, defaultValue: number): number {
 
 export const env = {
 	API_KEY: getEnvVar("API_KEY"),
-	PRICE_CHARTING_API_KEY: getEnvVar("PRICE_CHARTING_API_KEY"),
+	PRICECHARTING_API_KEY: getEnvVar("PRICECHARTING_API_KEY"),
 	PRICECHARTING_TIMEOUT: getEnvVarAsNumber("PRICECHARTING_TIMEOUT", 1500),
-	CACHE_DB_PATH: getEnvVar("CACHE_DB_PATH", ".cache/cache.db"),
 } as const;

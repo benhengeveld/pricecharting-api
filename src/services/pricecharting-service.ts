@@ -1,4 +1,3 @@
-import * as cheerio from "cheerio";
 import { env } from "../config/env.js";
 import { PriceChartingProduct } from "../models/price-charting-data.js";
 
@@ -35,7 +34,7 @@ export async function getProduct(params: {
 	q?: string;
 	upc?: string;
 }) {
-	let url = `${baseUrl}/product?t=${env.PRICE_CHARTING_API_KEY}`;
+	let url = `${baseUrl}/product?t=${env.PRICECHARTING_API_KEY}`;
 
 	if (params.id) {
 		url += `&id=${params.id}`;

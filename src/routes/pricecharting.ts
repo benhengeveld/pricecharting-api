@@ -4,7 +4,7 @@ import { PriceChartingProduct } from "../models/price-charting-data.js";
 
 const hono = new Hono();
 
-hono.get("/price", async (c) => {
+hono.get("/product", async (c) => {
 	const id = c.req.query("id");
 	const q = c.req.query("q");
 	const upc = c.req.query("upc");
